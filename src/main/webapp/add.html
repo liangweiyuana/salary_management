@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>注册</title>
+        <link rel="stylesheet" type="text/css" href="css/common.css">
+        <link rel="stylesheet" href="css/register.css">
+		<!--导入jquery-->
+		<script src="js/jquery-3.3.1.js"></script>
+
+		<script>
+			/*
+			   表单校验:
+			   	1.用户名:单词字符,长度8到20位
+			   	2.密码:单词字符,长度8到20位
+			   	3.email:邮件格式
+			   	4姓名:非空
+			   	5.手机号:手机号格式
+			   	6:出生日期:非空
+			   	7:验证码:非空
+			 */
+			//校驗用戶名
+      		function checkeid() {
+      			//获取输入框内容
+				let eid = $("#eid").val();
+				var reg_eid=/^\d{1,8}/;
+				let flag = reg_eid.test(eid);
+				if (flag){
+					$("#eid").css("border","");
+
+				}else{
+					$("#eid").css("border","1px solid red");
+				}
+				return flag;
+			}
+			//校验姓名
+			function checkename() {
+				//获取输入框内容
+				let ename = $("#ename").val();
+				var reg_ename=/^\S/;
+				let flag = reg_ename.test(ename);
+				if (flag){
+					$("#ename").css("border","");
+
+				}else{
+					$("#ename").css("border","1px solid red");
+				}
+				return flag;
+			}
+			//校验年龄
+			function checkeage(){
+				let eage = $("#eage").val();
+				var reg_eage=/^\d{1,8}$/;
+				let flag = reg_eage.test(eage);
+				if (flag){
+					$("#eage").css("border","");
+				}else {
+					$("#eage").css("border","1px solid red");
+				}
+				return flag;
+			}
+
+			//校验手机号
+			function checkephone(){
+      			let ephone = $("#ephone").val();
+      			var  reg_ephone=/^\d{4,13}$/;
+      			let flag = reg_ephone.test(ephone);
+				if (flag){
+					$("#ephone").css("border","");
+				}else {
+					$("#ephone").css("border","1px solid red");
+				}
+				return flag;
+			}
+			//校验工龄
+			function checkeworkyear(){
+				let eworkyear = $("#eworkyear").val();
+				var reg_eworkyear=/^\d{1,8}$/;
+				let flag = reg_eworkyear.test(eworkyear);
+				if (flag){
+					$("#eworkyear").css("border","");
+				}else {
+					$("#eworkyear").css("border","1px solid red");
+				}
+				return flag;
+			}
+
+
+			$(function () {
+				$("#registerForm").submit(function () {
+					//ajax请求校验表单内容
+					if( checkeid() && checkename() &&checkeage() &&checkephone() &&
+							checkeworkyear() ){
+						$.post("employee/add",$(this).serialize(),function (data) {
+							if (data.flag){
+								location.href="search_list.html?ename="+data.ename;
+							}else{
+								$("#msg").html(data.errorMsg);
+							}
+						});
+
+					}
+					return false;
+				});
+				$("#eid").blur(checkeid);
+				$("#ename").blur(checkename);
+				$("#eage").blur(checkeage);
+				$("#ephone").blur(checkephone);
+				$("#eworkyear").blur(checkeworkyear);
+
+
+			})
+		</script>
+
+    </head>
+	<body style="">
+	<!--引入头部-->
+	<div id="header"></div>
+        <!-- 头部 end -->
+    	<div class="rg_layout" >
+    		<div class="rg_form clearfix" style="background: no-repeat   ;
+    		background-size: 100%">
+    			<div class="rg_form_left">
+
+    			</div>
+    			<div class="rg_form_center"  style="margin-top: 60px">
+
+					<!--注册表单-->
+    				<form id="registerForm" action="user">
+						<!--提交处理请求的标识符-->
+						<input type="hidden" name="action" value="register">
+    					<table >
+
+    						<tr>
+								<span id="msg" style="color: red;"></span>
+    							<td class="td_left">
+    								<label for="eid">员工id</label>
+    							</td>
+    							<td class="td_right">
+    								<input type="text" id="eid" name="eid" placeholder="请输入员工id">
+    							</td>
+    						</tr>
+    						<tr>
+    							<td class="td_left">
+    								<label for="ename">姓名</label>
+    							</td>
+    							<td class="td_right">
+    								<input type="text" id="ename" name="ename" placeholder="请输入姓名">
+    							</td>
+    						</tr>
+    						<tr>
+							<td class="td_left">
+								<label for="did">所属部门</label>
+							</td>
+							<td class="td_right">
+								<select id="did" style="margin-left: 40px" name="did">
+									<option value="1">研发部</option>
+									<option value="2">营销部</option>
+									<option value="3">财务部</option>
+									<option value="4">采购部</option>
+								</select>
+							</td>
+						</tr>
+							<tr>
+								<td class="td_left">
+									<label for="jid">工作职位</label>
+								</td>
+								<td class="td_right">
+									<select id="jid" style="margin-left: 40px" name="jid">
+										<option value="1">普通职员</option>
+										<option value="2">组长</option>
+										<option value="3">经理</option>
+										<option value="4">高级专家</option>
+									</select>
+								</td>
+							</tr>
+    						<tr>
+    							<td class="td_left">
+    								<label for="eage">年龄</label>
+    							</td>
+    							<td class="td_right">
+    								<input type="text" id="eage" name="eage" placeholder="请输入年龄">
+    							</td>
+    						</tr>
+    						<tr>
+    							<td class="td_left">
+    								<label for="ephone">手机号</label>
+    							</td>
+    							<td class="td_right">
+    								<input type="text" id="ephone" name="ephone" placeholder="请输入您的手机号">
+    							</td>
+    						</tr>
+    						<tr>
+    							<td class="td_left">
+    								<label for="sex">性别</label>
+    							</td>
+    							<td class="td_right gender">
+									<input type="radio" id="sex" name="esex" value="男" checked> <span style="">男</span>
+    								<input type="radio" name="esex" value="女" > <span style="">女</span>
+    							</td>
+    						</tr>
+    						<tr>
+								<td class="td_left">
+									<label for="etag">工作类别</label>
+								</td>
+    							<td class="td_right">
+									<select id="etag" style="margin-left: 40px" name="etag">
+										<option value="正式员工">正式员工</option>
+										<option value="实习生">实习生</option>
+									</select>
+    							</td>
+    						</tr>
+							<tr>
+								<td class="td_left">
+									<label for="eworkyear">工龄</label>
+								</td>
+								<td class="td_right">
+									<input type="text" id="eworkyear"  name="eworkyear" placeholder="请输入您的工龄">
+								</td>
+							</tr>
+
+    						<tr>
+    							<td class="td_left"> 
+    							</td>
+    							<td class="td_right check"> 
+    								<input type="submit" class="submit" value="添加">
+
+    							</td>
+    						</tr>
+    					</table>
+    				</form>
+    			</div>
+    			<div class="rg_form_right">
+
+    			</div>
+    		</div>
+    	</div>
+        <!--引入尾部-->
+    	<div id="footer"></div>
+		<!--导入布局js，共享header和footer-->
+		<script type="text/javascript" src="js/include.js"></script>
+    	
+    </body>
+</html>

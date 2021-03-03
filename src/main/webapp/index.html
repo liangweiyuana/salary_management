@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <!--    共享header-->
+    <script type="text/javascript" src="js/include.js"></script>
+    <script>
+        $(function () {
+            $.post("company/selctCMembers",{},function (company) {
+                $("#cmember").html(company.cmembers);
+            })
+        })
+    </script>
+</head>
+<body id="bodybackground1">
+<div id="header"></div>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="width: 500px;height:350px; margin-top: 100px;margin-left: 15% ;float: left "></div>
+<div id="main2" style="width: 500px;height:350px; margin-top: 100px ; float: left "></div>
+<script type="text/javascript">
+    $(function () {
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+        myChart.setOption({
+            title: {
+                text: '部门人员分布'
+            },
+            tooltip: {},
+            legend: {
+                data: ['部门人数']
+            },
+            xAxis: {
+                data: []
+            },
+            yAxis: {},
+            series: [{
+                name: '部门人数',
+                type: 'bar',
+                data: []
+            }]
+
+        })
+        $.get("company/dcount",{},function (company) {
+
+            myChart.setOption({
+                xAxis: {
+                    data:company.name
+                },
+                series: [{
+                    name:'部门人数' ,
+                    data:company.members
+                }]
+            });
+        })
+
+        var myChart2 = echarts.init(document.getElementById('main2'));
+        myChart2.setOption({
+            title: {
+                text: '职位分布'
+            },
+            tooltip: {},
+            legend: {
+                data: ['职位人数']
+            },
+            xAxis: {
+                data: []
+            },
+            yAxis: {},
+            series: [{
+                name: '职位人数',
+                type: 'bar',
+                data: []
+            }]
+
+        })
+        $.get("company/jcount",{},function (company) {
+
+            myChart2.setOption({
+                xAxis: {
+                    data:company.name
+                },
+                series: [{
+                    name:'职位人数' ,
+                    data:company.members
+                }]
+            });
+        })
+
+
+
+    })
+</script>
+
+
+<div class="jumbotron">
+    <div class="container ">
+        <h2 class="alert alert-success">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</h2>
+        <h2 class="alert alert-success">欢迎使用苏维埃科研生产联合体有限公司员工工资管理系统</h2>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <span class="badge">天顶星</span>
+                公司地址
+            </li>
+        </ul>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <span class="badge" id="cmember"></span>
+                公司人数
+            </li>
+        </ul>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <span class="badge">核弹维修</span>
+                <span class="badge">航母保养</span>
+                <span class="badge">歼星舰研发</span>
+                主要业务
+            </li>
+        </ul>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <span class="badge">884888488848</span>
+                联系电话
+            </li>
+        </ul>
+        <p><a class="btn btn-success" href="search_list.html" role="button">了解更多</a></p>
+    </div>
+
+    <div class="progress">
+        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+            <span class="sr-only">20% Complete</span>
+        </div>
+        <div class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+            <span class="sr-only">20% Complete</span>
+        </div>
+        <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+            <span class="sr-only">20% Complete</span>
+        </div>
+        <div class="progress-bar progress-bar-danger progress-bar-striped active" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+            <span class="sr-only">20% Complete</span>
+        </div>
+        <div class="progress-bar progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+            <span class="sr-only">20% Complete</span>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+</body>
+</html>

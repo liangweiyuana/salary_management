@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>注册</title>
+        <link rel="stylesheet" type="text/css" href="css/common.css">
+        <link rel="stylesheet" href="css/register.css">
+		<script src="js/getParameter.js"></script>
+		<!--导入jquery-->
+		<script src="js/jquery-3.3.1.js"></script>
+
+		<script>
+			$(function () {
+				var eid=getParameter("eid");
+			$.post("employee/findOne",{eid:eid},function (db) {
+					$("#eid").val(db.eid);
+					$("#ename").val(db.ename);
+					$("#jid").find("option[value='" + db.jid + "']").prop("selected",true)
+				// 	if (db.jid==1){
+				// 		$("#s1").prop("selected",true)
+				// 	}
+				// if (db.jid==2){
+				// 	$("#s2").prop("selected",true)
+				// }
+				// if (db.jid==3){
+				// 	$("#s3").prop("selected",true)
+				// }
+				// if (db.jid==4){
+				// 	$("#s4").prop("selected",true)
+				// }
+				$("#eworkyear").val(db.eworkyear);
+
+				$(":radio[name='etag'][value='" + db.etag + "']").prop("checked", "checked");
+				$("input:radio[name='etag']").each(function(){
+
+					if(!$(this).prop("checked")){
+
+						$(this).prop("disabled", true);
+
+					}
+
+				});
+
+			})
+
+			});
+			//校验工龄
+			function checkeovertime(){
+				let eworkyear = $("#overtime").val();
+				var reg_eworkyear=/^\d{1,8}$/;
+				let flag = reg_eworkyear.test(eworkyear);
+				if (flag){
+					$("#overtime").css("border","");
+				}else {
+					$("#overtime").css("border","1px solid red");
+				}
+				return flag;
+			}
+			$(function () {
+				$("#registerForm").submit(function () {
+					//ajax请求校验表单内容
+					if( checkeovertime()){
+						return true;
+						}
+					else return false;
+					})
+				$("#overtime").blur(checkeovertime);
+				})
+
+
+
+		</script>
+
+
+    </head>
+	<body style=" ">
+	<!--引入头部-->
+	<div id="header"></div>
+        <!-- 头部 end -->
+    	<div class="rg_layout" >
+    		<div class="rg_form clearfix" style="background: no-repeat   ;
+    		background-size: 100%; height: 500px" >
+    			<div class="rg_form_left">
+
+    			</div>
+    			<div class="rg_form_center"  style="margin-top: 60px">
+
+					<!--注册表单-->
+    				<form id="registerForm"  action="salary/add">
+						<!--提交处理请求的标识符-->
+						<input type="hidden" name="action" value="register">
+    					<table >
+
+    						<tr>
+								<span id="msg" style="color: red;"></span>
+    							<td class="td_left">
+    								<label for="eid" >员工id</label>
+    							</td>
+    							<td class="td_right">
+    								<input readonly type="text" id="eid" name="eid" placeholder="请输入员工id">
+    							</td>
+    						</tr>
+    						<tr>
+    							<td class="td_left">
+    								<label for="ename">姓名</label>
+    							</td>
+    							<td class="td_right">
+    								<input readonly type="text" id="ename" name="ename" placeholder="请输入姓名">
+    							</td>
+    						</tr>
+							<tr>
+								<td class="td_left">
+									<label for="sdate">年月</label>
+								</td>
+								<td class="td_right" >
+									<input type="month" id="sdate" name="sdate" placeholder="年/月">
+								</td>
+
+							</tr>
+							<tr>
+								<td class="td_left" >
+									<label for="overtime">加班时间(小时)</label>
+								</td>
+								<td class="td_right">
+									<input type="text"  id="overtime"  name="overtime" placeholder="请输入您的加班时间">
+								</td>
+							</tr>
+
+							<tr>
+								<td class="td_left">
+									<label for="jid">选择职位</label>
+								</td>
+								<td class="td_right"  readonly="true">
+									<select id="jid" style="margin-left: 40px" name="jid" onfocus="this.defaultIndex=this.selectedIndex;" onchange="this.selectedIndex=this.defaultIndex;">
+										<option id="s1" value="1">普通职员</option>
+										<option id="s2" value="2">组长</option>
+										<option id="s3" value="3">经理</option>
+										<option id="s4" value="4">高级专家</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td class="td_left">
+									<label for="etag" >工作类别</label>
+								</td>
+								<td class="td_right gender"  >
+									<input type="radio"  id="etag" name="etag" value="正式员工"  > <span style="color: whitesmoke">正式员工</span>
+									<input type="radio"  name="etag" value="实习生"  > <span style="color: whitesmoke">实习生</span>
+								</td>
+							</tr>
+
+							<tr>
+								<td class="td_left" >
+									<label for="eworkyear">工龄</label>
+								</td>
+								<td class="td_right">
+									<input type="text"  id="eworkyear" readonly name="eworkyear" placeholder="请输入您的工龄">
+								</td>
+							</tr>
+
+    						<tr>
+    							<td class="td_left"> 
+    							</td>
+    							<td class="td_right check"> 
+    								<input type="submit" class="submit" value="添加">
+
+    							</td>
+    						</tr>
+    					</table>
+    				</form>
+    			</div>
+    			<div class="rg_form_right">
+
+    			</div>
+    		</div>
+    	</div>
+        <!--引入尾部-->
+
+		<!--导入布局js，共享header和footer-->
+		<script type="text/javascript" src="js/include.js"></script>
+
+    </body>
+</html>

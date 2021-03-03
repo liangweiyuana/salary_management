@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>工资信息</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>头</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="js/jquery-3.3.1.js"></script>
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/getParameter.js"></script>
+    <!--    共享header-->
+    <script type="text/javascript" src="js/include.js"></script>
+
+    <script>
+        $(function () {
+            var currentPage=getParameter("currentPage");
+            var eid=getParameter("eid");
+            var sdate=getParameter("sdate");
+
+            load(currentPage,eid,sdate);
+        });
+        function load(currentPage,eid,sdate) {
+            $.post("salary/pageQuery",{currentPage:currentPage,eid:eid,sdate:sdate},function (pb) {
+
+                var lis='';
+                lis+='  <li>\n' +
+                    '                 <a href="javascript:load('+1+',\''+eid+'\',\''+sdate+'\')" aria-label="Previous">\n' +
+                    '                     <span aria-hidden="true">&laquo;</span>\n' +
+                    '                </a>\n' +
+                    '                </li>';
+                let beforePage = currentPage-1;
+                if (beforePage<=0){
+                    beforePage=1;
+                };
+                lis+='<li ><a href="javascript:load('+beforePage+',\''+eid+'\',\''+sdate+'\')">上一页</a></li>';
+                /**页码显示**/
+                var begin;
+                var end;
+                if (pb.totalPage<10){
+                    begin=1;
+                    end=pb.totalPage;
+                }else{
+                    begin=pb.currentPage-5;
+                    end=pb.currentPage+4;
+                    if (begin<=0){
+                        begin=1;
+                        end=begin+9;
+                    }
+                    if (end>pb.totalPage){
+                        end=pb.totalPage;
+                        begin=end-9;
+                    }
+                };
+                for (var i = begin; i <=end ; i++) {
+                    if (currentPage==i){
+                        lis+='<li class="active" ><a href="javascript:load('+i+',\''+eid+'\',\''+sdate+'\')">'+i+'</a></li>';
+
+                    } else{
+                        lis+='<li class="curPage" ><a href="javascript:load('+i+',\''+eid+'\',\''+sdate+'\')">'+i+'</a></li>';
+                    }
+                };
+                var totalPage=pb.totalPage
+                let afterPage = currentPage+1;
+                if (afterPage>=totalPage){
+                    afterPage=totalPage;
+                };
+                lis+='<li ><a href="javascript:load('+afterPage+',\''+eid+'\',\''+sdate+'\')">下一页</a></li>';
+                lis+=' <li>\n' +
+                    '                    <a href="javascript:load('+totalPage+',\''+eid+'\',\''+sdate+'\')" aria-label="Next">\n' +
+                    '                        <span aria-hidden="true">&raquo;</span>\n' +
+                    '                    </a>\n' +
+                    '                </li>';
+                lis+=' <span class="page_num_inf" style=" " >\n' +
+                    '                    <i></i> 共\n' +
+                    '                    <span id="totalPage">'+totalPage+'</span>页<span id="totalCount">'+pb.totalCount+'</span>条\n' +
+                    '                </span>'
+                $("#pageNum").html(lis);
+
+                var detials_lis="";
+                detials_lis+='   <thead>\n' +
+                    '            <td>id</td>\n' +
+                    '            <td>名字</td>\n' +
+                    '            <td>工资月份</td>\n' +
+                    '            <td>基础工资</td>\n' +
+                    '            <td>加成</td>\n' +
+                    '            <td>加班(小时)</td>\n' +
+                    '            <td>加班工资</td>\n' +
+                    '            <td>总工资</td>\n' +
+                    '            <td><a class="btn btn-success" href="javascript:deleteSelect()">删除选中</a></td>\n' +
+                    '            <td><a class="btn btn-success" href="salary_list.html">查询所有</a></td>\n' +
+                   // '            <td><a class="btn btn-primary" href="search_list.html?">返回</a></td>\n' +
+
+                    // '    <td><input type="month" id="sdate" name="sdate" placeholder="年/月"> <td>  ' +
+                    //
+                    // '<input type="button" class="submit" value="查询此月">' +
+                    // ' <form class="" action="salary/selectBydate"><td> \n' +
+                    // '                    <div class="form-group">\n' +
+                    // '                    <input type="month" id="sdate" name="sdate" placeholder="年/月"> \n' +
+                    // '                    </div></td>>\n' +
+                    // '            <td>        <button type="submit" class="btn btn-default" id="search-button">查询</button>\n' +
+                    // '                   </td> </form> ' +
+                    '</thead>';
+                for (let i = 0; i <pb.list.length ; i++) {
+                    let listElement = pb.list[i];
+                    detials_lis+=' <tr>\n' +
+                        '            <td>'+listElement.eid+'</td>\n' +
+                        '            <td>'+listElement.ename+'</td>\n' +
+                        '            <td>'+listElement.sdate+'</td>\n' +
+                        '            <td>'+listElement.basesalary+'</td>\n' +
+                        '            <td>'+listElement.welfare+'</td>\n' +
+                        '            <td>'+listElement.overtime+'</td>\n' +
+                        '            <td>'+listElement.overtimepay+'</td>\n' +
+                        '            <td>'+listElement.totalsalary+'</td>\n' +
+                        '            <td><a class="btn btn-success" href="javascript:deleteOne('+listElement.eid+',\''+listElement.sdate+'\')">删除</a><input type="checkbox" class="ck" value='+listElement.eid+','+listElement.sdate+'></td>\n' +
+                        '            <td><a  class="btn btn-success" href="updatesalary.html?ename='+listElement.ename+'&sdate='+listElement.sdate+'&eid='+listElement.eid+'">修改</a></td>\n' +
+                        '            <td><a  class="btn btn-success" href="search_list.html?ename='+listElement.ename+'">返回</a></td>\n' +
+
+                        '        </tr>'
+
+                }
+                $("#list").html(detials_lis);
+        })
+        }
+        function deleteSelect() {
+            if (window.confirm("确认删除?")){
+            var arry =[];
+            $(".ck").each(function () {
+                if ($(this).prop('checked')){
+                    arry.push($(this).val());
+                }
+            })
+             $.post("salary/deleteSelect",{arry :JSON.stringify(arry)},function () {
+                alert("删除成功");
+             })
+            location.href="salary_list.html";
+            }
+            else{};
+        }
+        function deleteOne(eid,sdate) {
+            if (window.confirm("确认删除?")){
+                $.post("salary/deleteOne",{eid :eid,sdate:sdate},function () {
+                    alert("删除成功");
+                })
+                location.href="salary_list.html";
+            } else{}
+        }
+
+    </script>
+</head>
+<body style=" background-size: 100%;">
+<div id="header"></div>
+<div  style="margin-top: 120px; width: 80%   ; border: 0px solid; margin-left: 10%">
+    <div style="margin: 0 auto ;height: 450px ">
+    <table class="table table-hover " id="list"  style="color:  ;text-align: center">
+        <thead>
+            <td>id</td>
+            <td>名字</td>
+            <td>工资日期</td>
+            <td>基础工资</td>
+            <td>加成</td>
+            <td>总工资</td>
+            <td><a href="javascript:deleteSelect()">删除选中</a></td>
+            <td><a href="#">修改</a></td>
+
+        </thead>
+
+
+        <tr>
+            <td>1</td>
+            <td>徐念</td>
+            <td>研发部</td>
+            <td>2020-10</td>
+            <td>7000</td>
+            <td>300</td>
+            <td>7300</td>
+            <td><a href="#">删除</a><input type="checkbox" class="ck" value="1"></td>
+            <td><a href="#">修改</a></td>
+        </tr>
+
+        <tr>
+            <td>1</td>
+            <td>徐念</td>
+            <td>研发部</td>
+            <td>2020-10</td>
+            <td>7000</td>
+            <td>300</td>
+            <td>7300</td>
+            <td><a href="#">删除</a><input type="checkbox" class="ck" value="1"></td>
+            <td><a href="#">修改</a></td>
+        </tr>
+
+        <tr>
+            <td>1</td>
+            <td>徐念</td>
+            <td>研发部</td>
+            <td>2020-10</td>
+            <td>7000</td>
+            <td>300</td>
+            <td>7300</td>
+            <td><a href="#">删除</a><input type="checkbox" class="ck" value="1"></td>
+            <td><a href="#">修改</a></td>
+        </tr>
+
+
+
+        <tr>
+            <td>1</td>
+            <td>徐念</td>
+            <td>研发部</td>
+            <td>2020-10</td>
+            <td>7000</td>
+            <td>300</td>
+            <td>7300</td>
+            <td><a href="#">删除</a><input type="checkbox" class="ck" value="1"></td>
+            <td><a href="#">修改</a></td>
+        </tr>
+
+        <tr>
+            <td>1</td>
+            <td>徐念</td>
+            <td>研发部</td>
+            <td>2020-10</td>
+            <td>7000</td>
+            <td>300</td>
+            <td>7300</td>
+            <td><a href="#">删除</a><input type="checkbox" class="ck" value="1"></td>
+            <td><a href="#">修改</a></td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>徐念</td>
+            <td>研发部</td>
+            <td>2020-10</td>
+            <td>7000</td>
+            <td>300</td>
+            <td>7300</td>
+            <td><a href="#">删除</a><input type="checkbox" class="ck" value="1"></td>
+            <td><a href="#">修改</a></td>
+        </tr>   <tr>
+        <td>1</td>
+        <td>徐念</td>
+        <td>研发部</td>
+        <td>2020-10</td>
+        <td>7000</td>
+        <td>300</td>
+        <td>7300</td>
+        <td><a href="#">删除</a><input type="checkbox" class="ck" value="1"></td>
+        <td><a href="#">修改</a></td>
+    </tr>   <tr>
+        <td>1</td>
+        <td>徐念</td>
+        <td>研发部</td>
+        <td>2020-10</td>
+        <td>7000</td>
+        <td>300</td>
+        <td>7300</td>
+        <td><a href="#">删除</a><input type="checkbox" class="ck" value="1"></td>
+        <td><a href="#">修改</a></td>
+    </tr>
+        <tr>
+            <td>1</td>
+            <td>徐念</td>
+            <td>研发部</td>
+            <td>2020-10</td>
+            <td>7000</td>
+            <td>300</td>
+            <td>7300</td>
+            <td><a href="#">删除</a><input type="checkbox" class="ck" value="1"></td>
+            <td><a href="#">修改</a></td>
+        </tr>
+
+
+
+    </table>
+
+    </div>
+    <div style="margin-top:0px" >
+
+        <div style="margin-left: 5% ;">
+
+
+            <ul class="pagination pagination " id="pageNum" >
+                <li>
+                    <a href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="threeword"><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+                <li><a href="#">5</a></li>
+                <li>
+                    <a href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+
+
+
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
